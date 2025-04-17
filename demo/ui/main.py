@@ -123,8 +123,8 @@ app.mount(
 )
 
 if __name__ == "__main__":    
-    if not os.getenv("GOOGLE_API_KEY"):
-        print("GOOGLE_API_KEY environment variable not set.")
+    if not os.getenv("DEEPSEEK_API_KEY"):
+        print("DEEPSEEK_API_KEY environment variable not set.")
         exit(1)        
 
     import uvicorn

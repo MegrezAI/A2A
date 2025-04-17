@@ -30,8 +30,10 @@ from common.types import (
     Part,
     TaskStatusUpdateEvent,
 )
-
-
+from google.adk.models.lite_llm import LiteLlm
+import litellm
+litellm.set_verbose = True
+litellm._turn_on_debug()
 class HostAgent:
   """The host agent.
 
@@ -69,7 +71,7 @@ class HostAgent:
 
   def create_agent(self) -> Agent:
     return Agent(
-        model="gemini-2.0-flash-001",
+        model=LiteLlm(model="deepseek/deepseek-chat"),
         name="host_agent",
         instruction=self.root_instruction,
         before_model_callback=self.before_model_callback,
