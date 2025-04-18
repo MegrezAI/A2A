@@ -24,7 +24,33 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware.wsgi import WSGIMiddleware
 from dotenv import load_dotenv
 
+
+def patch_litellm():
+    """
+    修复 LiteLLM 与 DeepSeek API 的 content 格式兼容性问题
+    LiteLLM 的 _get_content 函数默认返回数组类型（兼容 OpenAI 多模态格式），
+    但 DeepSeek API 严格要求 content 字段必须是字符串类型。
+    """
+    from google.adk.models import lite_llm
+    
+    # 保存原始函数引用
+    original_get_content = lite_llm._get_content  
+
+    def patched_get_content(parts):
+        if not parts:
+            return ""
+            
+        if len(parts) == 1 and hasattr(parts[0], 'text'):
+            return parts[0].text
+            
+        # 其他情况返回空字符串（避免返回数组）
+        return ""  
+
+    lite_llm._get_content = patched_get_content
+
 load_dotenv()
+patch_litellm() 
+
 
 def on_load(e: me.LoadEvent):  # pylint: disable=unused-argument
     """On load event"""
